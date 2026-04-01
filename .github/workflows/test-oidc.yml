@@ -1,0 +1,45 @@
+name: Test OIDC via Reusable Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  # Job 1: Call the shared reusable workflow to fetch the secret
+  fetch-secret:
+    uses: samcogan-demo/shared-workflows/.github/workflows/read-keyvault-secret.yml@main
+    with:
+      secret_name: deploy-secret
+      keyvault_name: kv-oidc-opt3-f828bc5c
+    secrets: inherit
+
+  # Job 2: Use the secret in a downstream job
+  use-secret:
+    needs: fetch-secret
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use the retrieved secret
+        run: |
+          # The secret is available from the reusable workflow's output
+          # It is automatically masked in logs (appears as ***)
+          SECRET="${{ needs.fetch-secret.outputs.secret_value }}"
+
+          if [ -n "$SECRET" ]; then
+            echo "✅ Secret received from shared workflow"
+            echo "   This job is in the CALLING repo's own workflow"
+            echo "   You can use the secret for deployments, config, etc."
+            # Example: use it as an environment variable for a deployment step
+            # export CONNECTION_STRING="$SECRET"
+          else
+            echo "❌ No secret value received"
+            exit 1
+          fi
+
+      - name: Additional repo-specific steps
+        run: |
+          echo "This demonstrates that the calling repo has its own"
+          echo "workflow with additional jobs — the shared workflow"
+          echo "is just one step in the pipeline, not a replacement."
+          echo ""
+          echo "You could add build, test, deploy jobs here as normal."
