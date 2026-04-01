@@ -15,7 +15,7 @@ jobs:
     uses: samcogan-demo/shared-workflows/.github/workflows/read-keyvault-secret.yml@main
     with:
       secret_name: deploy-secret
-      keyvault_name: kv-oidc-opt3-b23ba098
+      keyvault_name: kv-oidc-opt3-f828bc5c
     secrets: inherit
 
   # Job 2: Use the secret in a downstream job
