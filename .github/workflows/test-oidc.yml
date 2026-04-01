@@ -12,10 +12,10 @@ permissions:
 jobs:
   # Job 1: Call the shared reusable workflow to fetch the secret
   fetch-secret:
-    uses: your-github-org/shared-workflows/.github/workflows/read-keyvault-secret.yml@main
+    uses: /shared-workflows/.github/workflows/read-keyvault-secret.yml@main
     with:
       secret_name: deploy-secret
-      keyvault_name: YOUR_KEYVAULT_NAME
+      keyvault_name: 
     secrets: inherit
 
   # Job 2: Use the secret in a downstream job
