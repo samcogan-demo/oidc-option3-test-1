@@ -8,14 +8,14 @@ on:
 permissions:
   id-token: write
   contents: read
-  
+
 jobs:
   # Job 1: Call the shared reusable workflow to fetch the secret
   fetch-secret:
-    uses: samcogan-demo/shared-workflows/.github/workflows/read-keyvault-secret.yml@main
+    uses: your-github-org/shared-workflows/.github/workflows/read-keyvault-secret.yml@main
     with:
       secret_name: deploy-secret
-      keyvault_name: kv-oidc-opt3-f828bc5c
+      keyvault_name: YOUR_KEYVAULT_NAME
     secrets: inherit
 
   # Job 2: Use the secret in a downstream job
@@ -26,8 +26,10 @@ jobs:
       - name: Use the retrieved secret
         run: |
           # The secret is available from the reusable workflow's output
-          # It is automatically masked in logs (appears as ***)
           SECRET="${{ needs.fetch-secret.outputs.secret_value }}"
+
+          # Mask it immediately so it doesn't appear in subsequent log lines
+          echo "::add-mask::$SECRET"
 
           if [ -n "$SECRET" ]; then
             echo "✅ Secret received from shared workflow"
