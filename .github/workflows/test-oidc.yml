@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+  
 jobs:
   # Job 1: Call the shared reusable workflow to fetch the secret
   fetch-secret:
